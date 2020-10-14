@@ -1,6 +1,7 @@
 # For help please refer to https://dev.bukkit.org/projects/passwordprotect
 hash: SHA-512
 opsRequirePassword: true
+allowEnterPasswordInChatInsteadOfLoginCommand: false
 disableJailArea: false
 cleanPassword: false
 password: ''

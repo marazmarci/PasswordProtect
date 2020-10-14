@@ -92,6 +92,7 @@ public class PasswordProtectUtilities {
         config.addDefault("hash", "SHA-512");
         config.addDefault("disableJailArea", Boolean.FALSE);
         config.addDefault("opsRequirePassword", Boolean.TRUE);
+        config.addDefault("allowEnterPasswordInChatInsteadOfLoginCommand", Boolean.TRUE);
         config.addDefault("cleanPassword", Boolean.FALSE);
         config.addDefault("password", "");
         config.addDefault("passwordClean", "");
