@@ -144,8 +144,11 @@ public class JailHelper {
             return;
         }
 
-        if (player.isOp() && plugin.getConfig().getBoolean("opsRequirePassword", true)
-                || !player.hasPermission("passwordprotect.nopassword")) {
+        boolean isOp = player.isOp();
+        boolean opsRequirePassword = plugin.getConfig().getBoolean("opsRequirePassword", true);
+        boolean hasNoPasswordPermission = player.hasPermission("passwordprotect.nopassword");
+
+        if ((!isOp && !hasNoPasswordPermission) || (opsRequirePassword && !hasNoPasswordPermission)) {
             if (plugin.getConfig().getBoolean("teleportBack", true) && !getPlayerLocations().containsKey(player.getUniqueId())) {
                 getPlayerLocations().put(player.getUniqueId(), player.getLocation());
             }
