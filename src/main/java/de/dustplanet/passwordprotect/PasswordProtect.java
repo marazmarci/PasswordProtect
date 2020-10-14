@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.UUID;
 import java.util.logging.Level;
 
-import org.bstats.bukkit.Metrics;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
@@ -110,7 +109,7 @@ public class PasswordProtect extends JavaPlugin {
 
         utils.registerCommands(jailHelper);
 
-        registerMetrics();
+        //registerMetrics();
     }
 
     @SuppressWarnings("unchecked")
@@ -135,10 +134,10 @@ public class PasswordProtect extends JavaPlugin {
         }
     }
 
-    @SuppressWarnings("unused")
+    /*@SuppressWarnings("unused")
     @SuppressFBWarnings("SEC_SIDE_EFFECT_CONSTRUCTOR")
     private void registerMetrics() {
         new Metrics(this, BSTATS_PLUGIN_ID);
-    }
+    }*/
 
 }
