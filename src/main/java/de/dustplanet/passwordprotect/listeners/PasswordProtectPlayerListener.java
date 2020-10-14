@@ -139,7 +139,20 @@ public class PasswordProtectPlayerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     @SuppressWarnings("checkstyle:MissingJavadocMethod")
     public void onPlayerChat(final AsyncPlayerChatEvent event) {
-        checkBasicEvent(event, "prevent.Chat");
+        if (plugin.getConfig().getBoolean("prevent.Chat", true)) {
+            final Player player = event.getPlayer();
+            final UUID playerUUID = player.getUniqueId();
+            if (jailHelper.getJailedPlayers().containsKey(playerUUID)) {
+                ((Cancellable) event).setCancelled(true);
+                if (plugin.getConfig().getBoolean("allowEnterPasswordInChatInsteadOfLoginCommand", true)) {
+                    String password = event.getMessage();
+                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(
+                        plugin,
+                        () -> attemptLoginWithPassword(player, playerUUID, password)
+                    );
+                }
+            }
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -167,43 +180,51 @@ public class PasswordProtectPlayerListener implements Listener {
                 return;
             }
 
-            String password = message.substring(loginTextWithSlashLength, message.length());
-            password = utils.hash(password);
-            if (password.equals(utils.getPassword())) {
-                loginPlayer(player, playerUUID);
+            String password = message.substring(loginTextWithSlashLength);
+            boolean loggedIn = attemptLoginWithPassword(player, playerUUID, password);
+            if (loggedIn)
                 event.setCancelled(true);
-                return;
-            }
 
-            int attempts = jailHelper.getJailedPlayers().get(playerUUID);
-            final int kickAfter = plugin.getConfig().getInt("wrongAttempts.kick");
-            final int banAfter = plugin.getConfig().getInt("wrongAttempts.ban");
-            final int attemptsLeftKick = kickAfter - attempts;
-            final int attemptsLeftBan = banAfter - attempts;
-            if (attemptsLeftKick <= 0 || attemptsLeftBan <= 0) {
-                if (attemptsLeftBan <= 0) {
-                    banPlayer(player, playerUUID);
-                    return;
-                } else if (attemptsLeftKick == 0) {
-                    kickPlayer(player);
-                }
-            }
-            if (attemptsLeftKick > 0 || attemptsLeftBan > 0) {
-                if (attemptsLeftKick > 0) {
-                    final String messageLocalization = plugin.getLocalization().getString("attempts_left_kick");
-                    utils.message(player, messageLocalization, Integer.toString(attemptsLeftKick));
-                }
-                final String messageLocalization = plugin.getLocalization().getString("attempts_left_ban");
-                utils.message(player, messageLocalization, Integer.toString(attemptsLeftBan));
-                attempts++;
-                jailHelper.getJailedPlayers().put(playerUUID, attempts);
-            }
-            event.setCancelled(true);
         } else if (message.toLowerCase(Locale.ENGLISH).startsWith("/login")) {
             final String messageLocalization = plugin.getLocalization().getString("already_logged_in");
             utils.message(player, messageLocalization, null);
             event.setCancelled(true);
         }
+    }
+
+    private boolean attemptLoginWithPassword(Player player, UUID playerUUID, String password) {
+
+        String hash = utils.hash(password);
+        if (hash.equals(utils.getPassword())) {
+            loginPlayer(player, playerUUID);
+            return true;
+        }
+
+        int attempts = jailHelper.getJailedPlayers().get(playerUUID);
+        final int kickAfter = plugin.getConfig().getInt("wrongAttempts.kick");
+        final int banAfter = plugin.getConfig().getInt("wrongAttempts.ban");
+        final int attemptsLeftKick = kickAfter - attempts;
+        final int attemptsLeftBan = banAfter - attempts;
+
+        if (attemptsLeftKick <= 0 || attemptsLeftBan <= 0) {
+            if (attemptsLeftBan <= 0) {
+                banPlayer(player, playerUUID);
+                return false;
+            } else if (attemptsLeftKick == 0) {
+                kickPlayer(player);
+            }
+        }
+
+        if (attemptsLeftKick > 0) {
+            final String messageLocalization = plugin.getLocalization().getString("attempts_left_kick");
+            utils.message(player, messageLocalization, Integer.toString(attemptsLeftKick));
+        }
+        final String messageLocalization = plugin.getLocalization().getString("attempts_left_ban");
+        utils.message(player, messageLocalization, Integer.toString(attemptsLeftBan));
+        attempts++;
+        jailHelper.getJailedPlayers().put(playerUUID, attempts);
+
+        return true;
     }
 
     @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
