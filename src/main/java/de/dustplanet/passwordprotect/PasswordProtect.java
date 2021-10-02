@@ -69,6 +69,7 @@ public class PasswordProtect extends JavaPlugin {
 
         jailHelper.clear();
         utils.getCommandList().clear();
+        utils.getTrustedIPFilters().clear();
     }
 
     @Override

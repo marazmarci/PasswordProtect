@@ -27,6 +27,15 @@
     </repository>
   </repositories>
 
+  <dependencies>
+    <dependency>
+      <groupId>com.github.maltalex</groupId>
+      <artifactId>ineter</artifactId>
+      <version>0.2.0</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+
   <build>
     <resources>
       <resource>
@@ -50,6 +59,32 @@
         </includes>
       </resource>
     </resources>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.2.4</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <artifactSet>
+                <includes>
+                  <include>com.github.maltalex:ineter:*</include>
+                </includes>
+              </artifactSet>
+              <minimizeJar>true</minimizeJar>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+
   </build>
 
  <!-- Maven is broken, so add scm duplication to child -->

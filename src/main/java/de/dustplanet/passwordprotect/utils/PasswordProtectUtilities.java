@@ -11,11 +11,14 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
+import hu.marazmarci.utils.ip.IPFilter;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
@@ -48,6 +51,9 @@ public class PasswordProtectUtilities {
     @Getter
     @Setter
     private List<String> commandList = new ArrayList<>();
+    @Getter
+    @Setter
+    private List<IPFilter> trustedIPFilters = Collections.emptyList();
     @Getter
     @Setter
     @SuppressWarnings("PMD.AvoidDuplicateLiterals")
@@ -126,6 +132,8 @@ public class PasswordProtectUtilities {
         } else {
             hashAlgorithm = config.getString("encryption");
         }
+        List<String> trustedIPFiltersStr = config.getStringList("trustedIPFilters");
+        trustedIPFilters = trustedIPFiltersStr.stream().map(IPFilter::create).collect(Collectors.toList());
 
         try {
             MessageDigest.getInstance(hashAlgorithm);

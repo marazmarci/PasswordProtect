@@ -2,6 +2,7 @@ package de.dustplanet.passwordprotect.jail;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.logging.Level;
 
 import javax.annotation.Nullable;
 
+import hu.marazmarci.utils.ip.IPFilter;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -143,6 +145,32 @@ public class JailHelper {
             }
             return;
         }
+
+        String playerIP = null;
+        InetSocketAddress address = player.getAddress();
+        if (address != null) {
+            playerIP = address.getAddress().getHostAddress();
+        }
+
+        // the default is to ask for password
+        boolean bypassPassword = false;
+
+        for (IPFilter filter : utils.getTrustedIPFilters()) {
+            Boolean match = filter.match(playerIP);
+            if (match != null) {
+                if (match) {
+                    // at least one allowing entry is required to bypass password
+                    bypassPassword = true;
+                } else {
+                    // one denying entry overrides any other allowing entries
+                    bypassPassword = false;
+                    break;
+                }
+            }
+        }
+
+        if (bypassPassword)
+            return;
 
         boolean isOp = player.isOp();
         boolean opsRequirePassword = plugin.getConfig().getBoolean("opsRequirePassword", true);
