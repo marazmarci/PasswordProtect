@@ -29,8 +29,8 @@ import lombok.Setter;
  *
  * @author timbru31
  */
-@SuppressWarnings({ "checkstyle:MultipleStringLiterals", "PMD.UseConcurrentHashMap", "PMD.DataflowAnomalyAnalysis" })
-@SuppressFBWarnings({ "IMC_IMMATURE_CLASS_NO_TOSTRING", "CD_CIRCULAR_DEPENDENCY" })
+@SuppressWarnings({"checkstyle:MultipleStringLiterals", "PMD.UseConcurrentHashMap", "PMD.DataflowAnomalyAnalysis"})
+@SuppressFBWarnings({"IMC_IMMATURE_CLASS_NO_TOSTRING", "CD_CIRCULAR_DEPENDENCY"})
 public class JailHelper {
     private static final int SLOWNESS_AMPLIFIER = 5;
     private static final int DARKNESS_AMPLIFIER = 15;
@@ -69,7 +69,7 @@ public class JailHelper {
     /**
      * Sets a new jail location in the given world.
      *
-     * @param world the world to update the jail location in
+     * @param world    the world to update the jail location in
      * @param location the new jail location
      */
     @SuppressFBWarnings("OPM_OVERLY_PERMISSIVE_METHOD")
@@ -98,8 +98,8 @@ public class JailHelper {
             final Location spawnLocation = world.getSpawnLocation();
             if (jailLocation == null) {
                 jailLocation = new JailLocation(world, spawnLocation.getX(),
-                        spawnLocation.getWorld().getHighestBlockYAt(spawnLocation.getBlockX(), spawnLocation.getBlockZ()) + 1,
-                        spawnLocation.getZ(), spawnLocation.getYaw(), spawnLocation.getPitch(), DEFAULT_RADIUS);
+                    spawnLocation.getWorld().getHighestBlockYAt(spawnLocation.getBlockX(), spawnLocation.getBlockZ()) + 1,
+                    spawnLocation.getZ(), spawnLocation.getYaw(), spawnLocation.getPitch(), DEFAULT_RADIUS);
                 jailLocations.put(world, jailLocation);
                 setJailLocation(world, jailLocation);
             }
@@ -121,8 +121,8 @@ public class JailHelper {
         final int radius = jailLocation.getRadius();
         // If player is within radius^2 blocks of jail location...
         if (Math.abs(jailLocation.getBlockX() - playerLocation.getBlockX()) <= radius
-                && Math.abs(jailLocation.getBlockY() - playerLocation.getBlockY()) <= radius
-                && Math.abs(jailLocation.getBlockZ() - playerLocation.getBlockZ()) <= radius) {
+            && Math.abs(jailLocation.getBlockY() - playerLocation.getBlockY()) <= radius
+            && Math.abs(jailLocation.getBlockZ() - playerLocation.getBlockZ()) <= radius) {
             return;
         }
         sendToJail(player);
@@ -133,8 +133,8 @@ public class JailHelper {
      *
      * @param player the player to check
      */
-    @SuppressWarnings({ "checkstyle:CyclomaticComplexity", "checkstyle:NPathComplexity", "PMD.CyclomaticComplexity",
-            "PMD.NPathComplexity" })
+    @SuppressWarnings({"checkstyle:CyclomaticComplexity", "checkstyle:NPathComplexity", "PMD.CyclomaticComplexity",
+        "PMD.NPathComplexity"})
     public void check(final Player player) {
         if (!utils.isPasswordSet()) {
             if (player.hasPermission("passwordprotect.setpassword")) {
@@ -180,7 +180,7 @@ public class JailHelper {
     }
 
     @Nullable
-    @SuppressWarnings({ "checkstyle:MagicNumber", "PMD.ShortVariable", "PMD.AvoidLiteralsInIfCondition" })
+    @SuppressWarnings({"checkstyle:MagicNumber", "PMD.ShortVariable", "PMD.AvoidLiteralsInIfCondition"})
     private JailLocation loadJailLocation(final World world) {
         final String worldName = world.getName();
         final List<Double> data = jails.getDoubleList(worldName + ".jailLocation");
