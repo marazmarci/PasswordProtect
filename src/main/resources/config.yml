@@ -36,3 +36,6 @@ allowedCommands:
 - motd
 teleportBack: true
 loginMessage: true
+trustedIPFilters:
+#- include 192.168.0.0/24
+#- exclude 192.168.0.1
